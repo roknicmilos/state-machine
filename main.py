@@ -1,22 +1,22 @@
-from camera_sm import CameraSM
+from camera_sm import CameraSM, CameraEvent
 
-from pressure_sensore_sm import PressureSensorSM
+from pressure_sensore_sm import PressureSensorSM, SensorEvent
 
 if __name__ == "__main__":
-    print("Simulate CAMERA lifecycle")
+    print("Simulate CAMERA lifecycle (event-driven):\n")
     camera = CameraSM()
-    camera.change_state(CameraSM.State.CONNECTING)
-    camera.change_state(CameraSM.State.READY)
-    camera.change_state(CameraSM.State.STREAMING)
-    camera.change_state(CameraSM.State.ERROR)
-    camera.change_state(CameraSM.State.DISCONNECTED)
+    camera.trigger(CameraEvent.CONNECT)
+    camera.trigger(CameraEvent.CONNECT_OK)
+    camera.trigger(CameraEvent.START_STREAM)
+    camera.trigger(CameraEvent.ERROR)
+    camera.trigger(CameraEvent.RESET)
 
-    print("\n")
+    print("- - - - - - - - - - - - - - - - - - - - - - - -\n")
 
-    print("Simulate PRESSURE SENSOR lifecycle")
+    print("Simulate PRESSURE SENSOR lifecycle (event-driven) \n")
     sensor = PressureSensorSM()
-    sensor.change_state(PressureSensorSM.State.READY)
-    sensor.change_state(PressureSensorSM.State.MEASURING)
-    sensor.change_state(PressureSensorSM.State.READY)
-    sensor.change_state(PressureSensorSM.State.ERROR)
-    sensor.change_state(PressureSensorSM.State.DISCONNECTED)
+    sensor.trigger(SensorEvent.CONNECT_OK)
+    sensor.trigger(SensorEvent.START_MEASURE)
+    sensor.trigger(SensorEvent.STOP_MEASURE)
+    sensor.trigger(SensorEvent.ERROR)
+    sensor.trigger(SensorEvent.RESET)
