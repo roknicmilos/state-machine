@@ -1,6 +1,6 @@
 from enum import Enum
 
-from base_sm import BaseStateMachine, Transition
+from base_sm import BaseStateMachine, Transition, State
 
 
 class SensorState(Enum):
@@ -19,54 +19,80 @@ class SensorEvent(Enum):
 
 
 class PressureSensorSM(BaseStateMachine):
-    State = SensorState
     Event = SensorEvent
 
-    def get_init_state(self) -> SensorState:
-        return SensorState.DISCONNECTED
+    def __init__(self):
+        self.disconnected_state = State(
+            name="disconnected",
+            description="Sensor is disconnected.",
+            on_enter_actions=[lambda: "Sensor disconnected."],
+            on_exit_actions=[lambda: "Leaving disconnected state."],
+        )
+        self.ready_state = State(
+            name="ready",
+            description="Sensor is ready.",
+            on_enter_actions=[lambda: "Sensor is now ready."],
+            on_exit_actions=[lambda: "Sensor is no longer ready."],
+        )
+        self.measuring_state = State(
+            name="measuring",
+            description="Sensor is measuring.",
+            on_enter_actions=[lambda: "Starting measurement."],
+            on_exit_actions=[lambda: "Stopping measurement."],
+        )
+        self.error_state = State(
+            name="error",
+            description="Sensor encountered an error.",
+            on_enter_actions=[lambda: "Entering error state."],
+            on_exit_actions=[lambda: "Exiting error state."],
+        )
+        super().__init__()
+
+    def get_init_state(self) -> State:
+        return self.disconnected_state
 
     def get_transitions(self) -> list[Transition]:
         return [
             Transition(
                 trigger_event=SensorEvent.CONNECT_OK,
-                from_state=SensorState.DISCONNECTED,
-                to_state=SensorState.READY,
-                action=self._sensor_ready,
+                from_state=self.disconnected_state,
+                to_state=self.ready_state,
+                actions=[self._sensor_ready],
                 description="Connected",
             ),
             Transition(
                 trigger_event=SensorEvent.START_MEASURE,
-                from_state=SensorState.READY,
-                to_state=SensorState.MEASURING,
-                action=self._start_measuring,
+                from_state=self.ready_state,
+                to_state=self.measuring_state,
+                actions=[self._start_measuring],
                 description="Begin measurement",
             ),
             Transition(
                 trigger_event=SensorEvent.ERROR,
-                from_state=SensorState.READY,
-                to_state=SensorState.ERROR,
-                action=self._handle_error,
+                from_state=self.ready_state,
+                to_state=self.error_state,
+                actions=[self._handle_error],
                 description="Sensor error",
             ),
             Transition(
                 trigger_event=SensorEvent.STOP_MEASURE,
-                from_state=SensorState.MEASURING,
-                to_state=SensorState.READY,
-                action=self._sensor_ready,
+                from_state=self.measuring_state,
+                to_state=self.ready_state,
+                actions=[self._sensor_ready],
                 description="Stop measurement",
             ),
             Transition(
                 trigger_event=SensorEvent.ERROR,
-                from_state=SensorState.MEASURING,
-                to_state=SensorState.ERROR,
-                action=self._handle_error,
+                from_state=self.measuring_state,
+                to_state=self.error_state,
+                actions=[self._handle_error],
                 description="Measurement error",
             ),
             Transition(
                 trigger_event=SensorEvent.RESET,
-                from_state=SensorState.ERROR,
-                to_state=SensorState.DISCONNECTED,
-                action=self._cleanup,
+                from_state=self.error_state,
+                to_state=self.disconnected_state,
+                actions=[self._cleanup],
                 description="Reset sensor",
             ),
         ]

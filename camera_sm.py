@@ -1,14 +1,6 @@
 from enum import Enum
 
-from base_sm import BaseStateMachine, Transition
-
-
-class CameraState(Enum):
-    DISCONNECTED = "disconnected"
-    CONNECTING = "connecting"
-    READY = "ready"
-    STREAMING = "streaming"
-    ERROR = "error"
+from base_sm import BaseStateMachine, Transition, State
 
 
 class CameraEvent(Enum):
@@ -21,68 +13,100 @@ class CameraEvent(Enum):
 
 
 class CameraSM(BaseStateMachine):
-    State = CameraState
     Event = CameraEvent
 
-    def get_init_state(self) -> CameraState:
-        return CameraState.DISCONNECTED
+    def __init__(self):
+        self.disconnected_state = State(
+            name="disconnected",
+            description="Camera is disconnected.",
+            on_enter_actions=[lambda: "Camera disconnected."],
+            on_exit_actions=[lambda: "Leaving disconnected state."],
+        )
+        self.connecting_state = State(
+            name="connecting",
+            description="Camera is connecting.",
+            on_enter_actions=[lambda: "Camera is connecting..."],
+            on_exit_actions=[lambda: "Camera connection attempt finished."],
+        )
+        self.ready_state = State(
+            name="ready",
+            description="Camera is ready.",
+            on_enter_actions=[lambda: "Camera is now ready."],
+            on_exit_actions=[lambda: "Camera is no longer ready."],
+        )
+        self.streaming_state = State(
+            name="streaming",
+            description="Camera is streaming.",
+            on_enter_actions=[lambda: "Starting camera stream."],
+            on_exit_actions=[lambda: "Stopping camera stream."],
+        )
+        self.error_state = State(
+            name="error",
+            description="Camera encountered an error.",
+            on_enter_actions=[lambda: "Entering error state."],
+            on_exit_actions=[lambda: "Exiting error state."],
+        )
+        super().__init__()
+
+    def get_init_state(self) -> State:
+        return self.disconnected_state
 
     def get_transitions(self) -> list[Transition]:
         return [
             Transition(
                 trigger_event=CameraEvent.CONNECT,
-                from_state=CameraState.DISCONNECTED,
-                to_state=CameraState.CONNECTING,
-                action=self._init_camera,
+                from_state=self.disconnected_state,
+                to_state=self.connecting_state,
+                actions=[self._init_camera],
                 description="Begin connection",
             ),
             Transition(
                 trigger_event=CameraEvent.CONNECT_OK,
-                from_state=CameraState.CONNECTING,
-                to_state=CameraState.READY,
-                action=self._camera_ready,
+                from_state=self.connecting_state,
+                to_state=self.ready_state,
+                actions=[self._camera_ready],
                 description="Connection established",
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
-                from_state=CameraState.CONNECTING,
-                to_state=CameraState.ERROR,
-                action=self._handle_error,
+                from_state=self.connecting_state,
+                to_state=self.error_state,
+                actions=[self._handle_error],
                 description="Connection failed",
             ),
             Transition(
                 trigger_event=CameraEvent.START_STREAM,
-                from_state=CameraState.READY,
-                to_state=CameraState.STREAMING,
-                action=self._start_stream,
+                from_state=self.ready_state,
+                to_state=self.streaming_state,
+                actions=[self._start_stream],
                 description="Start streaming",
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
-                from_state=CameraState.READY,
-                to_state=CameraState.ERROR,
-                action=self._handle_error,
+                from_state=self.ready_state,
+                to_state=self.error_state,
+                actions=[self._handle_error],
                 description="Runtime error",
             ),
             Transition(
                 trigger_event=CameraEvent.STOP_STREAM,
-                from_state=CameraState.STREAMING,
-                to_state=CameraState.READY,
-                action=self._camera_ready,
+                from_state=self.streaming_state,
+                to_state=self.ready_state,
+                actions=[self._camera_ready],
                 description="Stop streaming",
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
-                from_state=CameraState.STREAMING,
-                to_state=CameraState.ERROR,
-                action=self._handle_error,
+                from_state=self.streaming_state,
+                to_state=self.error_state,
+                actions=[self._handle_error],
                 description="Streaming error",
             ),
             Transition(
                 trigger_event=CameraEvent.RESET,
-                from_state=CameraState.ERROR,
-                to_state=CameraState.DISCONNECTED,
-                action=self._cleanup,
+                from_state=self.error_state,
+                to_state=self.disconnected_state,
+                actions=[self._cleanup],
                 description="Reset from error",
             ),
         ]
