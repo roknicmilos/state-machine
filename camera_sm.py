@@ -88,15 +88,6 @@ class CameraSM(BaseStateMachine):
             ),
         ]
 
-    def get_state_actions(self) -> dict[CameraState, Callable[[], None]]:
-        return {
-            CameraState.CONNECTING: self._init_camera,
-            CameraState.READY: self._camera_ready,
-            CameraState.STREAMING: self._start_stream,
-            CameraState.ERROR: self._handle_error,
-            CameraState.DISCONNECTED: self._cleanup,
-        }
-
     def _init_camera(self) -> None:
         print("> [action] Initializing...\n")
 

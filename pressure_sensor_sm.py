@@ -72,14 +72,6 @@ class PressureSensorSM(BaseStateMachine):
             ),
         ]
 
-    def get_state_actions(self) -> dict[SensorState, Callable[[], None]]:
-        return {
-            SensorState.READY: self._sensor_ready,
-            SensorState.MEASURING: self._start_measuring,
-            SensorState.ERROR: self._handle_error,
-            SensorState.DISCONNECTED: self._cleanup,
-        }
-
     def _sensor_ready(self) -> None:
         print("> [action] Ready.\n")
 
