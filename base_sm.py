@@ -45,7 +45,7 @@ class BaseStateMachine(ABC, Generic[StateType, EventType]):
     def on_state(self, state: StateType, fn: Callable[[], None]) -> None:
         self.state_actions[state] = fn
 
-    def trigger(self, event: EventType) -> None:
+    def handle_event(self, event: EventType) -> None:
         """
         Trigger a transition by event Enum from the current state.
         """
@@ -55,7 +55,6 @@ class BaseStateMachine(ABC, Generic[StateType, EventType]):
         events = self.transitions_map.get(self.state, {})
 
         if event not in events:
-            # event is Enum — show its value for readability
             print(
                 f"[{self.name}] ❌ Invalid event '{event.value}' "
                 f"for state {self.state.value}"
