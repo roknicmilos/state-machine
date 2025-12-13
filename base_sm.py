@@ -1,20 +1,30 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable
+
+Action = Callable[..., str]
+
+
+@dataclass
+class State:
+    name: str
+    description: str | None = None
+    on_enter_actions: list[Action] = field(default_factory=list)
+    on_exit_actions: list[Action] = field(default_factory=list)
 
 
 @dataclass
 class Transition:
     trigger_event: Enum
-    from_state: Enum
-    to_state: Enum
-    action: Callable[[], None] | None = None
+    from_state: State
+    to_state: State
+    actions: list[Action] = field(default_factory=list)
     description: str | None = None
 
 
 class BaseStateMachine(ABC):
-    state: Enum
+    state: State
     transitions: list[Transition]
 
     def __init__(self):
@@ -26,7 +36,7 @@ class BaseStateMachine(ABC):
         self.transitions = self.get_transitions()
 
     @abstractmethod
-    def get_init_state(self) -> Enum:
+    def get_init_state(self) -> State:
         ...
 
     @abstractmethod
@@ -37,22 +47,22 @@ class BaseStateMachine(ABC):
         transition = self.find_transition(self.state, event)
         self.state = transition.to_state
 
-        action_result = None
-        if transition.action:
-            action_result = transition.action()
+        action_results = []
+        for action in transition.actions:
+            action_results.append(action())
 
         print(
             f"[{self.name}]\n"
             f" 🔔 event:       {transition.trigger_event.value}\n"
-            f" 🔄 transition:  {transition.from_state.value} "
-            f"→ {transition.to_state.value}\n"
-            f" 🎯 action:      {action_result}\n"
+            f" 🔄 transition:  {transition.from_state.name} "
+            f"→ {transition.to_state.name}\n"
+            f" 🎯 actions:      {' ; '.join(action_results)}\n"
             f" 📝 description: {transition.description}\n"
         )
 
     def find_transition(
         self,
-        from_state: Enum,
+        from_state: State,
         event: Enum
     ) -> Transition:
         for transition in self.transitions:
@@ -64,5 +74,5 @@ class BaseStateMachine(ABC):
 
         raise Exception(
             f"[{self.name}] ❌ Invalid event '{event.value}' "
-            f"for state {self.state.value}"
+            f"for state {self.state.name}"
         )
