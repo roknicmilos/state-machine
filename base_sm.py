@@ -3,21 +3,21 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Generic, TypeVar
 
-State = TypeVar("State", bound=Enum)
-Event = TypeVar("Event", bound=Enum)
-TransitionsMap = dict[State, dict[Event, "Transition[State, Event]"]]
+StateType = TypeVar("StateType", bound=Enum)
+EventType = TypeVar("EventType", bound=Enum)
+TransitionsMap = dict[StateType, dict[EventType, "Transition[State, Event]"]]
 
 
 @dataclass
-class Transition(Generic[State, Event]):
-    target_state: State
+class Transition(Generic[StateType, EventType]):
+    target_state: StateType
     description: str | None = None
 
 
-class BaseStateMachine(ABC, Generic[State, Event]):
-    state: State
+class BaseStateMachine(ABC, Generic[StateType, EventType]):
+    state: StateType
     transitions_map: TransitionsMap
-    state_actions: dict[State, Callable[[], None]]
+    state_actions: dict[StateType, Callable[[], None]]
 
     def __init__(self):
         self.name: str = self.__class__.__name__
@@ -27,11 +27,11 @@ class BaseStateMachine(ABC, Generic[State, Event]):
         self.state = self.get_init_state()
         self.transitions_map = self.get_transitions_map()
         self.state_actions = self.get_state_actions()
-        for state, action in self.get_state_actions().items():
+        for state, action in self.state_actions.items():
             self.on_state(state, action)
 
     @abstractmethod
-    def get_init_state(self) -> State:
+    def get_init_state(self) -> StateType:
         ...
 
     @abstractmethod
@@ -39,13 +39,13 @@ class BaseStateMachine(ABC, Generic[State, Event]):
         ...
 
     @abstractmethod
-    def get_state_actions(self) -> dict[State, Callable[[], None]]:
+    def get_state_actions(self) -> dict[StateType, Callable[[], None]]:
         ...
 
-    def on_state(self, state: State, fn: Callable[[], None]) -> None:
+    def on_state(self, state: StateType, fn: Callable[[], None]) -> None:
         self.state_actions[state] = fn
 
-    def trigger(self, event: Event) -> None:
+    def trigger(self, event: EventType) -> None:
         """
         Trigger a transition by event Enum from the current state.
         """

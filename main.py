@@ -1,6 +1,6 @@
 from camera_sm import CameraSM, CameraEvent
 
-from pressure_sensore_sm import PressureSensorSM, SensorEvent
+from pressure_sensor_sm import PressureSensorSM, SensorEvent
 
 if __name__ == "__main__":
     print("Simulate CAMERA lifecycle:\n")
