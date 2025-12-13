@@ -26,7 +26,7 @@ class PressureSensorSM(BaseStateMachine):
             name="disconnected",
             description="Sensor is disconnected.",
             on_enter_actions=[lambda: "Sensor disconnected."],
-            on_exit_actions=[lambda: "Connecting sensor..."],
+            on_exit_actions=[lambda: "Leaving disconnected state."],
         )
         self.ready_state = State(
             name="ready",
