@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable
 
-from base_sm import BaseStateMachine, Transition, TransitionsMap
+from base_sm import BaseStateMachine, Transition
 
 
 class SensorState(Enum):
@@ -26,41 +26,51 @@ class PressureSensorSM(BaseStateMachine[SensorState, SensorEvent]):
     def get_init_state(self) -> SensorState:
         return SensorState.DISCONNECTED
 
-    def get_transitions_map(self) -> TransitionsMap:
-        return {
-            SensorState.DISCONNECTED: {
-                SensorEvent.CONNECT_OK: Transition(
-                    target_state=SensorState.READY,
-                    description="Connected"
-                )
-            },
-            SensorState.READY: {
-                SensorEvent.START_MEASURE: Transition(
-                    target_state=SensorState.MEASURING,
-                    description="Begin measurement"
-                ),
-                SensorEvent.ERROR: Transition(
-                    target_state=SensorState.ERROR,
-                    description="Sensor error"
-                ),
-            },
-            SensorState.MEASURING: {
-                SensorEvent.STOP_MEASURE: Transition(
-                    target_state=SensorState.READY,
-                    description="Stop measurement"
-                ),
-                SensorEvent.ERROR: Transition(
-                    target_state=SensorState.ERROR,
-                    description="Measurement error"
-                ),
-            },
-            SensorState.ERROR: {
-                SensorEvent.RESET: Transition(
-                    target_state=SensorState.DISCONNECTED,
-                    description="Reset sensor"
-                )
-            },
-        }
+    def get_transitions(self) -> list[Transition[SensorState, SensorEvent]]:
+        return [
+            Transition(
+                trigger_event=SensorEvent.CONNECT_OK,
+                from_state=SensorState.DISCONNECTED,
+                to_state=SensorState.READY,
+                action=self._sensor_ready,
+                description="Connected",
+            ),
+            Transition(
+                trigger_event=SensorEvent.START_MEASURE,
+                from_state=SensorState.READY,
+                to_state=SensorState.MEASURING,
+                action=self._start_measuring,
+                description="Begin measurement",
+            ),
+            Transition(
+                trigger_event=SensorEvent.ERROR,
+                from_state=SensorState.READY,
+                to_state=SensorState.ERROR,
+                action=self._handle_error,
+                description="Sensor error",
+            ),
+            Transition(
+                trigger_event=SensorEvent.STOP_MEASURE,
+                from_state=SensorState.MEASURING,
+                to_state=SensorState.READY,
+                action=self._sensor_ready,
+                description="Stop measurement",
+            ),
+            Transition(
+                trigger_event=SensorEvent.ERROR,
+                from_state=SensorState.MEASURING,
+                to_state=SensorState.ERROR,
+                action=self._handle_error,
+                description="Measurement error",
+            ),
+            Transition(
+                trigger_event=SensorEvent.RESET,
+                from_state=SensorState.ERROR,
+                to_state=SensorState.DISCONNECTED,
+                action=self._cleanup,
+                description="Reset sensor",
+            ),
+        ]
 
     def get_state_actions(self) -> dict[SensorState, Callable[[], None]]:
         return {
@@ -77,7 +87,7 @@ class PressureSensorSM(BaseStateMachine[SensorState, SensorEvent]):
         print("> [action] Measuring...\n")
 
     def _handle_error(self) -> None:
-        print("> [action] ERROR!\n")
+        print("> [action] Handling Error!\n")
 
     def _cleanup(self) -> None:
-        print("> [action] Cleaning up...\n")
+        print("> [action] Cleaning Up...\n")

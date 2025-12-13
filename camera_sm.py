@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable
 
-from base_sm import BaseStateMachine, Transition, TransitionsMap
+from base_sm import BaseStateMachine, Transition
 
 
 class CameraState(Enum):
@@ -28,51 +28,65 @@ class CameraSM(BaseStateMachine[CameraState, CameraEvent]):
     def get_init_state(self) -> CameraState:
         return CameraState.DISCONNECTED
 
-    def get_transitions_map(self) -> TransitionsMap:
-        return {
-            CameraState.DISCONNECTED: {
-                CameraEvent.CONNECT: Transition(
-                    target_state=CameraState.CONNECTING,
-                    description="Begin connection"
-                )
-            },
-            CameraState.CONNECTING: {
-                CameraEvent.CONNECT_OK: Transition(
-                    target_state=CameraState.READY,
-                    description="Connection established"
-                ),
-                CameraEvent.ERROR: Transition(
-                    target_state=CameraState.ERROR,
-                    description="Connection failed"
-                ),
-            },
-            CameraState.READY: {
-                CameraEvent.START_STREAM: Transition(
-                    target_state=CameraState.STREAMING,
-                    description="Start streaming"
-                ),
-                CameraEvent.ERROR: Transition(
-                    target_state=CameraState.ERROR,
-                    description="Runtime error"
-                ),
-            },
-            CameraState.STREAMING: {
-                CameraEvent.STOP_STREAM: Transition(
-                    target_state=CameraState.READY,
-                    description="Stop streaming"
-                ),
-                CameraEvent.ERROR: Transition(
-                    target_state=CameraState.ERROR,
-                    description="Streaming error"
-                ),
-            },
-            CameraState.ERROR: {
-                CameraEvent.RESET: Transition(
-                    target_state=CameraState.DISCONNECTED,
-                    description="Reset from error"
-                )
-            },
-        }
+    def get_transitions(self) -> list[Transition[CameraState, CameraEvent]]:
+        return [
+            Transition(
+                trigger_event=CameraEvent.CONNECT,
+                from_state=CameraState.DISCONNECTED,
+                to_state=CameraState.CONNECTING,
+                action=self._init_camera,
+                description="Begin connection",
+            ),
+            Transition(
+                trigger_event=CameraEvent.CONNECT_OK,
+                from_state=CameraState.CONNECTING,
+                to_state=CameraState.READY,
+                action=self._camera_ready,
+                description="Connection established",
+            ),
+            Transition(
+                trigger_event=CameraEvent.ERROR,
+                from_state=CameraState.CONNECTING,
+                to_state=CameraState.ERROR,
+                action=self._handle_error,
+                description="Connection failed",
+            ),
+            Transition(
+                trigger_event=CameraEvent.START_STREAM,
+                from_state=CameraState.READY,
+                to_state=CameraState.STREAMING,
+                action=self._start_stream,
+                description="Start streaming",
+            ),
+            Transition(
+                trigger_event=CameraEvent.ERROR,
+                from_state=CameraState.READY,
+                to_state=CameraState.ERROR,
+                action=self._handle_error,
+                description="Runtime error",
+            ),
+            Transition(
+                trigger_event=CameraEvent.STOP_STREAM,
+                from_state=CameraState.STREAMING,
+                to_state=CameraState.READY,
+                action=self._camera_ready,
+                description="Stop streaming",
+            ),
+            Transition(
+                trigger_event=CameraEvent.ERROR,
+                from_state=CameraState.STREAMING,
+                to_state=CameraState.ERROR,
+                action=self._handle_error,
+                description="Streaming error",
+            ),
+            Transition(
+                trigger_event=CameraEvent.RESET,
+                from_state=CameraState.ERROR,
+                to_state=CameraState.DISCONNECTED,
+                action=self._cleanup,
+                description="Reset from error",
+            ),
+        ]
 
     def get_state_actions(self) -> dict[CameraState, Callable[[], None]]:
         return {
@@ -93,7 +107,7 @@ class CameraSM(BaseStateMachine[CameraState, CameraEvent]):
         print("> [action] Streaming...\n")
 
     def _handle_error(self) -> None:
-        print("> [action] ERROR!\n")
+        print("> [action] Handling Error!\n")
 
     def _cleanup(self) -> None:
-        print("> [action] Cleaning up...\n")
+        print("> [action] Cleaning Up...\n")
