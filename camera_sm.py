@@ -20,7 +20,7 @@ class CameraSM(BaseStateMachine):
             name="disconnected",
             description="Camera is disconnected.",
             on_enter_actions=[lambda: "Camera disconnected."],
-            on_exit_actions=[lambda: "Connecting camera..."],
+            on_exit_actions=[lambda: "Leaving disconnected state."],
         )
         self.connecting_state = State(
             name="connecting",
