@@ -1,6 +1,6 @@
 # State Machine Framework
 
-Small example project implementing **simple state machines framework** in
+Small example project implementing **simple state machine framework** in
 **Python**.
 
 This framework includes/supports:
