@@ -22,11 +22,11 @@ class CameraSM(BaseStateMachine):
             on_enter_actions=[lambda: "Camera disconnected."],
             on_exit_actions=[lambda: "Connecting camera..."],
         )
-        self.connected_state = State(
-            name="connected",
-            description="Camera is connected.",
-            on_enter_actions=[lambda: "Camera connected successfully."],
-            on_exit_actions=[lambda: "Disconnecting camera..."],
+        self.connecting_state = State(
+            name="connecting",
+            description="Camera is connecting.",
+            on_enter_actions=[lambda: "Camera is connecting..."],
+            on_exit_actions=[lambda: "Camera connection attempt finished."],
         )
         self.ready_state = State(
             name="ready",
@@ -56,20 +56,20 @@ class CameraSM(BaseStateMachine):
             Transition(
                 trigger_event=CameraEvent.CONNECT,
                 from_state=self.disconnected_state,
-                to_state=self.connected_state,
+                to_state=self.connecting_state,
                 actions=[self._init_camera],
                 description="Begin connection",
             ),
             Transition(
                 trigger_event=CameraEvent.CONNECT_OK,
-                from_state=self.connected_state,
+                from_state=self.connecting_state,
                 to_state=self.ready_state,
                 actions=[self._camera_ready],
                 description="Connection established",
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
-                from_state=self.connected_state,
+                from_state=self.connecting_state,
                 to_state=self.error_state,
                 actions=[self._handle_error],
                 description="Connection failed",

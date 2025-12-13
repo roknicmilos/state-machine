@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable
 
-Action = Callable[..., str]
+Action = Callable[[], str]
 
 
 @dataclass
@@ -50,13 +50,13 @@ class BaseStateMachine(ABC):
         for action in self.state.on_exit_actions:
             action_results.append(f"on_exit_state  > {action()}")
 
+        for action in transition.actions:
+            action_results.append(f"on_transition  > {action()}")
+
         self.state = transition.to_state
 
         for action in self.state.on_enter_actions:
             action_results.append(f"on_enter_state > {action()}")
-
-        for action in transition.actions:
-            action_results.append(f"on_trans_end   > {action()}")
 
         print(
             f"[{self.name}]\n"
