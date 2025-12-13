@@ -5,28 +5,28 @@ from typing import Callable, Generic, TypeVar
 
 State = TypeVar("State", bound=Enum)
 Event = TypeVar("Event", bound=Enum)
-TransactionsMap = dict[State, dict[Event, "Transition[State, Event]"]]
+TransitionsMap = dict[State, dict[Event, "Transition[State, Event]"]]
 
 
 @dataclass
 class Transition(Generic[State, Event]):
-    trigger_event: Event
     target_state: State
     description: str | None = None
 
 
 class BaseStateMachine(ABC, Generic[State, Event]):
-    state: State | None
+    state: State
+    transitions_map: TransitionsMap
+    state_actions: dict[State, Callable[[], None]]
 
     def __init__(self):
         self.name: str = self.__class__.__name__
-        self.transitions_map: TransactionsMap = {}
-        self.state_actions: dict[State, Callable[[], None]] = {}
         self.setup()
 
     def setup(self) -> None:
-        self.set_initial_state(self.get_init_state())
-        self.set_transitions_map(self.get_transitions_map())
+        self.state = self.get_init_state()
+        self.transitions_map = self.get_transitions_map()
+        self.state_actions = self.get_state_actions()
         for state, action in self.get_state_actions().items():
             self.on_state(state, action)
 
@@ -35,18 +35,12 @@ class BaseStateMachine(ABC, Generic[State, Event]):
         ...
 
     @abstractmethod
-    def get_transitions_map(self) -> TransactionsMap:
+    def get_transitions_map(self) -> TransitionsMap:
         ...
 
     @abstractmethod
     def get_state_actions(self) -> dict[State, Callable[[], None]]:
         ...
-
-    def set_initial_state(self, initial_state: State) -> None:
-        self.state = initial_state
-
-    def set_transitions_map(self, transitions: TransactionsMap) -> None:
-        self.transitions_map = transitions
 
     def on_state(self, state: State, fn: Callable[[], None]) -> None:
         self.state_actions[state] = fn
@@ -70,7 +64,7 @@ class BaseStateMachine(ABC, Generic[State, Event]):
 
         transition = events[event]
         print(
-            f"[{self.name}] (🔔 {transition.trigger_event.value}) "
+            f"[{self.name}] 🔔 {event}: "
             f"🔄 {self.state.value} → {transition.target_state.value}"
         )
         self.state = transition.target_state

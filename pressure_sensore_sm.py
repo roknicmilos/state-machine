@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable
 
-from base_sm import BaseStateMachine, Transition
+from base_sm import BaseStateMachine, Transition, TransitionsMap
 
 
 class SensorState(Enum):
@@ -26,43 +26,36 @@ class PressureSensorSM(BaseStateMachine[SensorState, SensorEvent]):
     def get_init_state(self) -> SensorState:
         return SensorState.DISCONNECTED
 
-    def get_transitions_map(self) -> dict[
-        SensorState, dict[SensorEvent, Transition[SensorState, SensorEvent]]]:
+    def get_transitions_map(self) -> TransitionsMap:
         return {
             SensorState.DISCONNECTED: {
                 SensorEvent.CONNECT_OK: Transition(
-                    trigger_event=SensorEvent.CONNECT_OK,
                     target_state=SensorState.READY,
                     description="Connected"
                 )
             },
             SensorState.READY: {
                 SensorEvent.START_MEASURE: Transition(
-                    trigger_event=SensorEvent.START_MEASURE,
                     target_state=SensorState.MEASURING,
                     description="Begin measurement"
                 ),
                 SensorEvent.ERROR: Transition(
-                    trigger_event=SensorEvent.ERROR,
                     target_state=SensorState.ERROR,
                     description="Sensor error"
                 ),
             },
             SensorState.MEASURING: {
                 SensorEvent.STOP_MEASURE: Transition(
-                    trigger_event=SensorEvent.STOP_MEASURE,
                     target_state=SensorState.READY,
                     description="Stop measurement"
                 ),
                 SensorEvent.ERROR: Transition(
-                    trigger_event=SensorEvent.ERROR,
                     target_state=SensorState.ERROR,
                     description="Measurement error"
                 ),
             },
             SensorState.ERROR: {
                 SensorEvent.RESET: Transition(
-                    trigger_event=SensorEvent.RESET,
                     target_state=SensorState.DISCONNECTED,
                     description="Reset sensor"
                 )

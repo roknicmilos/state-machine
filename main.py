@@ -3,7 +3,7 @@ from camera_sm import CameraSM, CameraEvent
 from pressure_sensore_sm import PressureSensorSM, SensorEvent
 
 if __name__ == "__main__":
-    print("Simulate CAMERA lifecycle (event-driven):\n")
+    print("Simulate CAMERA lifecycle:\n")
     camera = CameraSM()
     camera.trigger(CameraEvent.CONNECT)
     camera.trigger(CameraEvent.CONNECT_OK)
@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     print("- - - - - - - - - - - - - - - - - - - - - - - -\n")
 
-    print("Simulate PRESSURE SENSOR lifecycle (event-driven) \n")
+    print("Simulate PRESSURE SENSOR lifecycle:\n")
     sensor = PressureSensorSM()
     sensor.trigger(SensorEvent.CONNECT_OK)
     sensor.trigger(SensorEvent.START_MEASURE)

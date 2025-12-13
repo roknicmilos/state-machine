@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Callable
 
-from base_sm import BaseStateMachine, Transition
+from base_sm import BaseStateMachine, Transition, TransitionsMap
 
 
 class CameraState(Enum):
@@ -28,55 +28,46 @@ class CameraSM(BaseStateMachine[CameraState, CameraEvent]):
     def get_init_state(self) -> CameraState:
         return CameraState.DISCONNECTED
 
-    def get_transitions_map(self) -> dict[
-        CameraState, dict[CameraEvent, Transition[CameraState, CameraEvent]]]:
+    def get_transitions_map(self) -> TransitionsMap:
         return {
             CameraState.DISCONNECTED: {
                 CameraEvent.CONNECT: Transition(
-                    trigger_event=CameraEvent.CONNECT,
                     target_state=CameraState.CONNECTING,
                     description="Begin connection"
                 )
             },
             CameraState.CONNECTING: {
                 CameraEvent.CONNECT_OK: Transition(
-                    trigger_event=CameraEvent.CONNECT_OK,
                     target_state=CameraState.READY,
                     description="Connection established"
                 ),
                 CameraEvent.ERROR: Transition(
-                    trigger_event=CameraEvent.ERROR,
                     target_state=CameraState.ERROR,
                     description="Connection failed"
                 ),
             },
             CameraState.READY: {
                 CameraEvent.START_STREAM: Transition(
-                    trigger_event=CameraEvent.START_STREAM,
                     target_state=CameraState.STREAMING,
                     description="Start streaming"
                 ),
                 CameraEvent.ERROR: Transition(
-                    trigger_event=CameraEvent.ERROR,
                     target_state=CameraState.ERROR,
                     description="Runtime error"
                 ),
             },
             CameraState.STREAMING: {
                 CameraEvent.STOP_STREAM: Transition(
-                    trigger_event=CameraEvent.STOP_STREAM,
                     target_state=CameraState.READY,
                     description="Stop streaming"
                 ),
                 CameraEvent.ERROR: Transition(
-                    trigger_event=CameraEvent.ERROR,
                     target_state=CameraState.ERROR,
                     description="Streaming error"
                 ),
             },
             CameraState.ERROR: {
                 CameraEvent.RESET: Transition(
-                    trigger_event=CameraEvent.RESET,
                     target_state=CameraState.DISCONNECTED,
                     description="Reset from error"
                 )
