@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Callable
 
 from base_sm import BaseStateMachine, Transition
 
@@ -72,14 +71,14 @@ class PressureSensorSM(BaseStateMachine):
             ),
         ]
 
-    def _sensor_ready(self) -> None:
-        print("> [action] Ready.\n")
+    def _sensor_ready(self) -> str:
+        return "Ready."
 
-    def _start_measuring(self) -> None:
-        print("> [action] Measuring...\n")
+    def _start_measuring(self) -> str:
+        return "Measuring..."
 
-    def _handle_error(self) -> None:
-        print("> [action] Handling Error!\n")
+    def _handle_error(self) -> str:
+        return "Handling Error!"
 
-    def _cleanup(self) -> None:
-        print("> [action] Cleaning Up...\n")
+    def _cleanup(self) -> str:
+        return "Cleaning Up..."

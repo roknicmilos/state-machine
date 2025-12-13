@@ -35,14 +35,20 @@ class BaseStateMachine(ABC):
 
     def handle_event(self, event: Enum) -> None:
         transition = self.find_transition(self.state, event)
-        print(
-            f"[{self.name}] 🔔 {event}: "
-            f"🔄 {self.state.value} → {transition.to_state.value}"
-        )
         self.state = transition.to_state
 
+        action_result = None
         if transition.action:
-            transition.action()
+            action_result = transition.action()
+
+        print(
+            f"[{self.name}]\n"
+            f" 🔔 event:       {transition.trigger_event.value}\n"
+            f" 🔄 transition:  {transition.from_state.value} "
+            f"→ {transition.to_state.value}\n"
+            f" 🎯 action:      {action_result}\n"
+            f" 📝 description: {transition.description}\n"
+        )
 
     def find_transition(
         self,

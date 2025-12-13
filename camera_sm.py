@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Callable
 
 from base_sm import BaseStateMachine, Transition
 
@@ -88,17 +87,17 @@ class CameraSM(BaseStateMachine):
             ),
         ]
 
-    def _init_camera(self) -> None:
-        print("> [action] Initializing...\n")
+    def _init_camera(self) -> str:
+        return "Initializing..."
 
-    def _camera_ready(self) -> None:
-        print("> [action] Ready.\n")
+    def _camera_ready(self) -> str:
+        return "Ready."
 
-    def _start_stream(self) -> None:
-        print("> [action] Streaming...\n")
+    def _start_stream(self) -> str:
+        return "Streaming..."
 
-    def _handle_error(self) -> None:
-        print("> [action] Handling Error!\n")
+    def _handle_error(self) -> str:
+        return "Handling Error!"
 
-    def _cleanup(self) -> None:
-        print("> [action] Cleaning Up...\n")
+    def _cleanup(self) -> str:
+        return "Cleaning Up..."
