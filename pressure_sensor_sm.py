@@ -19,14 +19,14 @@ class SensorEvent(Enum):
     RESET = "reset"
 
 
-class PressureSensorSM(BaseStateMachine[SensorState, SensorEvent]):
+class PressureSensorSM(BaseStateMachine):
     State = SensorState
     Event = SensorEvent
 
     def get_init_state(self) -> SensorState:
         return SensorState.DISCONNECTED
 
-    def get_transitions(self) -> list[Transition[SensorState, SensorEvent]]:
+    def get_transitions(self) -> list[Transition]:
         return [
             Transition(
                 trigger_event=SensorEvent.CONNECT_OK,

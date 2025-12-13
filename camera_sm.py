@@ -21,14 +21,14 @@ class CameraEvent(Enum):
     RESET = "reset"
 
 
-class CameraSM(BaseStateMachine[CameraState, CameraEvent]):
+class CameraSM(BaseStateMachine):
     State = CameraState
     Event = CameraEvent
 
     def get_init_state(self) -> CameraState:
         return CameraState.DISCONNECTED
 
-    def get_transitions(self) -> list[Transition[CameraState, CameraEvent]]:
+    def get_transitions(self) -> list[Transition]:
         return [
             Transition(
                 trigger_event=CameraEvent.CONNECT,

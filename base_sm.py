@@ -1,24 +1,21 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Generic, TypeVar
-
-StateType = TypeVar("StateType", bound=Enum)
-EventType = TypeVar("EventType", bound=Enum)
+from typing import Callable
 
 
 @dataclass
-class Transition(Generic[StateType, EventType]):
-    trigger_event: EventType
-    from_state: StateType
-    to_state: StateType
+class Transition:
+    trigger_event: Enum
+    from_state: Enum
+    to_state: Enum
     action: Callable[[], None] | None = None
     description: str | None = None
 
 
-class BaseStateMachine(ABC, Generic[StateType, EventType]):
-    state: StateType
-    transitions: list[Transition[StateType, EventType]]
+class BaseStateMachine(ABC):
+    state: Enum
+    transitions: list[Transition]
 
     def __init__(self):
         self.name: str = self.__class__.__name__
@@ -29,14 +26,14 @@ class BaseStateMachine(ABC, Generic[StateType, EventType]):
         self.transitions = self.get_transitions()
 
     @abstractmethod
-    def get_init_state(self) -> StateType:
+    def get_init_state(self) -> Enum:
         ...
 
     @abstractmethod
-    def get_transitions(self) -> list[Transition[StateType, EventType]]:
+    def get_transitions(self) -> list[Transition]:
         ...
 
-    def handle_event(self, event: EventType) -> None:
+    def handle_event(self, event: Enum) -> None:
         transition = self.find_transition(self.state, event)
         print(
             f"[{self.name}] 🔔 {event}: "
@@ -49,8 +46,8 @@ class BaseStateMachine(ABC, Generic[StateType, EventType]):
 
     def find_transition(
         self,
-        from_state: StateType,
-        event: EventType
+        from_state: Enum,
+        event: Enum
     ) -> Transition:
         for transition in self.transitions:
             if (
