@@ -50,7 +50,10 @@ Initial camera state: disconnected
 [CameraSM]
  🔔 event:       connect
  🔄 transition:  disconnected → connecting
- 🎯 action:      None
+ 🎯 actions: 
+	on_exit_state  > Connecting camera...
+	on_transition  > Initializing...
+	on_enter_state > Camera is connecting...
  📝 description: Begin connection
 
 ... (more transitions and actions)
