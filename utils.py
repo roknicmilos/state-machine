@@ -20,6 +20,9 @@ def log_event(
     else:
         log += " ⚠️  No valid transition found for this event.\n"
 
-    log += f" 🎯 actions: \n\t{'\n\t'.join(action_results)}\n"
+    if action_results:
+        log += f" 🎯 actions: \n\t{'\n\t'.join(action_results)}\n"
+    else:
+        log += " 🎯 actions: None\n"
 
     print(log)
