@@ -11,7 +11,7 @@ This framework includes/supports:
 - **Defining transitions** between states with associated events and actions,
 - **Handling events** to trigger state transitions.
 
-Check out the code in [src/base_sm.py](./src/base_sm.py) for details.
+Check out the code in [src/core/](./src/core) for details.
 
 ## Demo
 
