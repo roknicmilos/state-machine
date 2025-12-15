@@ -3,6 +3,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable
 
+# For demo purposes, all actions return strings
+# describing what they did. This allows logging
+# of action results.
 Action = Callable[[], str]
 
 
@@ -70,25 +73,29 @@ class BaseStateMachine(ABC):
         ...
 
     def handle_event(self, event: Enum) -> tuple[list[str], Transition | None]:
-        action_results = self.state.on_event(event)
+        """
+        Perform actions associated with an event and a state
+        transition, and return the results of those actions.
+        """
+        results = self.state.on_event(event)
         if transition := self.find_transition(self.state, event):
-            action_results.extend(self.transition(transition))
+            results.extend(self.transition(transition))
 
-        return action_results, transition
+        return results, transition
 
     def transition(self, transition: Transition) -> list[str]:
         """
         Perform actions associated with a state transition, and
         return the results of those actions.
         """
-        action_results = [
+        results = [
             *self.state.on_exit(),
             *transition.on_trigger(),
         ]
         self.state = transition.to_state
-        action_results.extend(self.state.on_enter())
+        results.extend(self.state.on_enter())
 
-        return action_results
+        return results
 
     def find_transition(
         self,
