@@ -2,9 +2,11 @@ from camera_sm import CameraSM, CameraEvent
 
 from pressure_sensor_sm import PressureSensorSM, SensorEvent
 from utils import log_event
+from enum import Enum
+from camera_sm import BaseStateMachine
 
 
-def _handle_event(state_machine, event):
+def _handle_event(state_machine: BaseStateMachine, event: Enum) -> None:
     action_results, transition = state_machine.handle_event(event)
     log_event(
         sm_name=state_machine.name,
