@@ -1,9 +1,9 @@
-from camera_sm import CameraSM, CameraEvent
-
-from pressure_sensor_sm import PressureSensorSM, SensorEvent
-from utils import log_event
 from enum import Enum
-from camera_sm import BaseStateMachine
+
+from camera_sm import CameraSM, CameraEvent
+from pressure_sensor_sm import PressureSensorSM, SensorEvent
+from core import BaseStateMachine
+from utils import log_event
 
 
 def _handle_event(state_machine: BaseStateMachine, event: Enum) -> None:

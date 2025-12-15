@@ -1,6 +1,6 @@
 from enum import Enum
 
-from base_sm import BaseStateMachine, Transition, State
+from core import BaseStateMachine, Transition, State
 
 
 class SensorState(Enum):

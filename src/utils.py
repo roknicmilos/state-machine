@@ -1,4 +1,4 @@
-from base_sm import Transition
+from core import Transition
 
 
 def log_event(
