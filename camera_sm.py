@@ -7,6 +7,7 @@ class CameraEvent(Enum):
     CONNECT = "connect"
     CONNECT_OK = "connect_ok"
     START_STREAM = "start_stream"
+    STREAMING = "streaming"
     STOP_STREAM = "stop_stream"
     ERROR = "error"
     RESET = "reset"
@@ -37,6 +38,9 @@ class CameraSM(BaseStateMachine):
         self.streaming_state = State(
             name="streaming",
             description="Camera is streaming.",
+            on_event_actions={
+                CameraEvent.STREAMING: [lambda: "Processing stream..."]
+            },
             on_enter_actions=[lambda: "Starting camera stream."],
             on_exit_actions=[lambda: "Stopping camera stream."],
         )

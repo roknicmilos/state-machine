@@ -13,6 +13,7 @@ class SensorState(Enum):
 class SensorEvent(Enum):
     CONNECT_OK = "connect_ok"
     START_MEASURE = "start_measure"
+    STREAMING = "streaming"
     STOP_MEASURE = "stop_measure"
     ERROR = "error"
     RESET = "reset"
@@ -37,6 +38,9 @@ class PressureSensorSM(BaseStateMachine):
         self.measuring_state = State(
             name="measuring",
             description="Sensor is measuring.",
+            on_event_actions={
+                SensorEvent.STREAMING: [lambda: "Processing measurement..."]
+            },
             on_enter_actions=[lambda: "Starting measurement."],
             on_exit_actions=[lambda: "Stopping measurement."],
         )
