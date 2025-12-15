@@ -11,15 +11,15 @@ This framework includes/supports:
 - **Defining transitions** between states with associated events and actions,
 - **Handling events** to trigger state transitions.
 
-Check out the code in [base_sm.py](./base_sm.py) for details.
+Check out the code in [src/base_sm.py](./src/base_sm.py) for details.
 
 ## Demo
 
 The project also includes a demo with **two example state machines**
 demonstrating the framework:
 
-- Camera connection lifecycle,
-- Pressure sensor lifecycle.
+- [Camera connection lifecycle](./docs/camera-state-machine.png),
+- [Pressure sensor lifecycle](./docs/pressure-sensor-state-machine.png).
 
 See the "Quick start" section below to run the demo.
 
@@ -36,7 +36,7 @@ See the "Quick start" section below to run the demo.
 
 3. Run the demo script from the project root:
     ```bash
-    python3 main.py
+    python3 src/main.py
     ```
 
 ## What you should see
