@@ -69,18 +69,12 @@ class BaseStateMachine(ABC):
     def get_transitions(self) -> list[Transition]:
         ...
 
-    def handle_event(self, event: Enum) -> None:
+    def handle_event(self, event: Enum) -> tuple[list[str], Transition | None]:
         action_results = self.state.on_event(event)
         if transition := self.find_transition(self.state, event):
             action_results.extend(self.transition(transition))
 
-        from utils import log_event
-        log_event(
-            sm_name=self.name,
-            event_name=event.name,
-            action_results=action_results,
-            transition=transition
-        )
+        return action_results, transition
 
     def transition(self, transition: Transition) -> list[str]:
         """
