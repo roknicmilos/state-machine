@@ -6,7 +6,8 @@ Small example project implementing **simple state machine framework** in
 This framework includes/supports:
 
 - **Abstract base class** for state machines,
-- **Defining states** with entry and exit actions,
+- **Defining states** with actions that run on a specific event, and entering or
+  exiting a state,
 - **Defining transitions** between states with associated events and actions,
 - **Handling events** to trigger state transitions.
 
