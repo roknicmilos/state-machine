@@ -4,13 +4,13 @@ from core import BaseStateMachine, Transition, State
 
 
 class CameraEvent(Enum):
-    CONNECT = "connect"
-    CONNECT_OK = "connect_ok"
-    START_STREAM = "start_stream"
-    STREAMING = "streaming"
-    STOP_STREAM = "stop_stream"
-    ERROR = "error"
-    RESET = "reset"
+    CONNECT = 'connect'
+    CONNECT_OK = 'connect_ok'
+    START_STREAM = 'start_stream'
+    STREAMING = 'streaming'
+    STOP_STREAM = 'stop_stream'
+    ERROR = 'error'
+    RESET = 'reset'
 
 
 class CameraSM(BaseStateMachine):
@@ -18,37 +18,37 @@ class CameraSM(BaseStateMachine):
 
     def __init__(self):
         self.disconnected_state = State(
-            name="disconnected",
-            description="Camera is disconnected.",
-            on_enter_actions=[lambda: "Camera disconnected."],
-            on_exit_actions=[lambda: "Leaving disconnected state."],
+            name='disconnected',
+            description='Camera is disconnected.',
+            on_enter_actions=[lambda: 'Camera disconnected.'],
+            on_exit_actions=[lambda: 'Leaving disconnected state.'],
         )
         self.connecting_state = State(
-            name="connecting",
-            description="Camera is connecting.",
-            on_enter_actions=[lambda: "Camera is connecting..."],
-            on_exit_actions=[lambda: "Camera connection attempt finished."],
+            name='connecting',
+            description='Camera is connecting.',
+            on_enter_actions=[lambda: 'Camera is connecting...'],
+            on_exit_actions=[lambda: 'Camera connection attempt finished.'],
         )
         self.ready_state = State(
-            name="ready",
-            description="Camera is ready.",
-            on_enter_actions=[lambda: "Camera is now ready."],
-            on_exit_actions=[lambda: "Camera is no longer ready."],
+            name='ready',
+            description='Camera is ready.',
+            on_enter_actions=[lambda: 'Camera is now ready.'],
+            on_exit_actions=[lambda: 'Camera is no longer ready.'],
         )
         self.streaming_state = State(
-            name="streaming",
-            description="Camera is streaming.",
+            name='streaming',
+            description='Camera is streaming.',
             on_event_actions={
-                CameraEvent.STREAMING: [lambda: "Processing stream..."]
+                CameraEvent.STREAMING: [lambda: 'Processing stream...']
             },
-            on_enter_actions=[lambda: "Starting camera stream."],
-            on_exit_actions=[lambda: "Stopping camera stream."],
+            on_enter_actions=[lambda: 'Starting camera stream.'],
+            on_exit_actions=[lambda: 'Stopping camera stream.'],
         )
         self.error_state = State(
-            name="error",
-            description="Camera encountered an error.",
-            on_enter_actions=[lambda: "Entering error state."],
-            on_exit_actions=[lambda: "Exiting error state."],
+            name='error',
+            description='Camera encountered an error.',
+            on_enter_actions=[lambda: 'Entering error state.'],
+            on_exit_actions=[lambda: 'Exiting error state.'],
         )
         super().__init__()
 
@@ -62,70 +62,70 @@ class CameraSM(BaseStateMachine):
                 from_state=self.disconnected_state,
                 to_state=self.connecting_state,
                 actions=[self._init_camera],
-                description="Begin connection",
+                description='Begin connection',
             ),
             Transition(
                 trigger_event=CameraEvent.CONNECT_OK,
                 from_state=self.connecting_state,
                 to_state=self.ready_state,
                 actions=[self._camera_ready],
-                description="Connection established",
+                description='Connection established',
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
                 from_state=self.connecting_state,
                 to_state=self.error_state,
                 actions=[self._handle_error],
-                description="Connection failed",
+                description='Connection failed',
             ),
             Transition(
                 trigger_event=CameraEvent.START_STREAM,
                 from_state=self.ready_state,
                 to_state=self.streaming_state,
                 actions=[self._start_stream],
-                description="Start streaming",
+                description='Start streaming',
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
                 from_state=self.ready_state,
                 to_state=self.error_state,
                 actions=[self._handle_error],
-                description="Runtime error",
+                description='Runtime error',
             ),
             Transition(
                 trigger_event=CameraEvent.STOP_STREAM,
                 from_state=self.streaming_state,
                 to_state=self.ready_state,
                 actions=[self._camera_ready],
-                description="Stop streaming",
+                description='Stop streaming',
             ),
             Transition(
                 trigger_event=CameraEvent.ERROR,
                 from_state=self.streaming_state,
                 to_state=self.error_state,
                 actions=[self._handle_error],
-                description="Streaming error",
+                description='Streaming error',
             ),
             Transition(
                 trigger_event=CameraEvent.RESET,
                 from_state=self.error_state,
                 to_state=self.disconnected_state,
                 actions=[self._cleanup],
-                description="Reset from error",
+                description='Reset from error',
             ),
         ]
 
     def _init_camera(self) -> str:
-        return "Initializing..."
+        return 'Initializing...'
 
     def _camera_ready(self) -> str:
-        return "Ready."
+        return 'Ready.'
 
     def _start_stream(self) -> str:
-        return "Streaming..."
+        return 'Streaming...'
 
     def _handle_error(self) -> str:
-        return "Handling Error!"
+        return 'Handling Error!'
 
     def _cleanup(self) -> str:
-        return "Cleaning Up..."
+        return 'Cleaning Up...'

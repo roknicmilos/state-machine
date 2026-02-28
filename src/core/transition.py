@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
-from core import State, Action
+from core import Action, State
 
 
 @dataclass
@@ -15,5 +15,5 @@ class Transition:
     def on_trigger(self) -> list[str]:
         action_results = []
         for action in self.actions:
-            action_results.append(f"on_transition  > {action()}")
+            action_results.append(f'on_transition  > {action()}')
         return action_results

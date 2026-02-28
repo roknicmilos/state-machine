@@ -1,6 +1,6 @@
-from .types import Action
+from .base import BaseStateMachine
 from .state import State
 from .transition import Transition
-from .base import BaseStateMachine
+from .types import Action
 
-__all__ = ["BaseStateMachine", "Transition", "State", "Action"]
+__all__ = ['BaseStateMachine', 'Transition', 'State', 'Action']

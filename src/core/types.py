@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 # For demo purposes, all actions return strings
 # describing what they did. This allows logging

@@ -16,17 +16,17 @@ class State:
         action_results = []
         actions = self.on_event_actions.get(event, [])
         for action in actions:
-            action_results.append(f"on_event       > {action()}")
+            action_results.append(f'on_event       > {action()}')
         return action_results
 
     def on_enter(self) -> list[str]:
         action_results = []
         for action in self.on_enter_actions:
-            action_results.append(f"on_enter_state > {action()}")
+            action_results.append(f'on_enter_state > {action()}')
         return action_results
 
     def on_exit(self) -> list[str]:
         action_results = []
         for action in self.on_exit_actions:
-            action_results.append(f"on_exit_state  > {action()}")
+            action_results.append(f'on_exit_state  > {action()}')
         return action_results

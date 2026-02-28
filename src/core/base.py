@@ -8,7 +8,7 @@ class BaseStateMachine(ABC):
     state: State
     transitions: list[Transition]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.name: str = self.__class__.__name__
         self.setup()
 
@@ -17,12 +17,10 @@ class BaseStateMachine(ABC):
         self.transitions = self.get_transitions()
 
     @abstractmethod
-    def get_init_state(self) -> State:
-        ...
+    def get_init_state(self) -> State: ...
 
     @abstractmethod
-    def get_transitions(self) -> list[Transition]:
-        ...
+    def get_transitions(self) -> list[Transition]: ...
 
     def handle_event(self, event: Enum) -> tuple[list[str], Transition | None]:
         """
@@ -50,14 +48,12 @@ class BaseStateMachine(ABC):
         return results
 
     def find_transition(
-        self,
-        from_state: State,
-        event: Enum
+        self, from_state: State, event: Enum
     ) -> Transition | None:
         for transition in self.transitions:
             if (
-                transition.from_state == from_state and
-                transition.trigger_event == event
+                transition.from_state == from_state
+                and transition.trigger_event == event
             ):
                 return transition
 
