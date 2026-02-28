@@ -6,22 +6,11 @@ Small example project implementing **simple state machine framework** in
 This framework includes/supports:
 
 - **Abstract base class** for state machines,
-- **Defining states** with actions that run on a specific event, and entering or
-  exiting a state,
-- **Defining transitions** between states with associated events and actions,
+- **Defining states and trigger events**,
+- **Defining transitions** between states with associated events and callbacks,
 - **Handling events** to trigger state transitions.
 
-Check out the code in [src/core/](./src/core) for details.
-
-## Demo
-
-The project also includes a demo with **two example state machines**
-demonstrating the framework:
-
-- [Camera connection lifecycle](./docs/camera-state-machine.png),
-- [Pressure sensor lifecycle](./docs/pressure-sensor-state-machine.png).
-
-See the "Quick start" section below to run the demo.
+Check out the code in [src/state_machine/](src/state_machine) for details.
 
 ## Quick start
 
@@ -46,7 +35,8 @@ See the "Quick start" section below to run the demo.
 
 ### Pre-commit hooks
 
-This project uses [`pre-commit`](https://pre-commit.com) (installed via the `dev` dependency group in `pyproject.toml`) to run tools like `ruff` and `ty` before each commit.
+This project uses [`pre-commit`](https://pre-commit.com) (installed via the `dev` dependency group in `pyproject.toml`)
+to run tools like `ruff` and `ty` before each commit.
 
 1. Install dev dependencies (if you haven’t already):
     ```bash
