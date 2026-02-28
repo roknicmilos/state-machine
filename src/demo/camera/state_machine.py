@@ -4,18 +4,18 @@ from state_machine import BaseStateMachine
 
 
 class CameraState(Enum):
-    OFFLINE = 'offline'
-    READY = 'ready'
-    STREAMING = 'streaming'
-    ERROR = 'error'
+    OFFLINE = 'OFFLINE'
+    READY = 'READY'
+    STREAMING = 'STREAMING'
+    ERROR = 'ERROR'
 
 
 class CameraEvent(Enum):
-    POWER_ON = 'power_on'
-    START_STREAM = 'start_stream'
-    STOP_STREAM = 'stop_stream'
-    ERROR = 'error'
-    RESET = 'reset'
+    POWER_ON = 'POWER_ON'
+    START_STREAM = 'START_STREAM'
+    STOP_STREAM = 'STOP_STREAM'
+    ERROR = 'ERROR'
+    RESET = 'RESET'
 
 
 class CameraStateMachine(BaseStateMachine):

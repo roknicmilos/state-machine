@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 from state_machine import Transition
+from utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseStateMachine(ABC):
@@ -9,6 +12,7 @@ class BaseStateMachine(ABC):
         self.name: str = self.__class__.__name__
         self.transitions: list[Transition] = []
         self.state: Enum = self.get_init_state()
+        logger.info(f'{self.name} initialized with state {self.state.value}')
 
     @abstractmethod
     def get_init_state(self) -> Enum: ...
@@ -37,6 +41,11 @@ class BaseStateMachine(ABC):
         """
         if transition := self.find_transition(self.state, trigger_event):
             self.perform_transition(transition)
+        else:
+            logger.warning(
+                f'{self.name} has no transition from state {self.state.value} '
+                f'with trigger event {trigger_event.value}'
+            )
 
     def perform_transition(self, transition: Transition) -> None:
         """
@@ -44,6 +53,12 @@ class BaseStateMachine(ABC):
         current state. This method assumes that the given transition is valid
         for the current state.
         """
+        transition_display = (
+            f'<source={transition.source_state.value}; '
+            f'event={transition.trigger_event.value}; '
+            f'target={transition.target_state.value}>'
+        )
+        logger.info(f'{self.name} starting transition {transition_display}')
         for before_callback in transition.before_callbacks:
             before_callback()
 
@@ -51,6 +66,8 @@ class BaseStateMachine(ABC):
 
         for after_callback in transition.after_callbacks:
             after_callback()
+
+        logger.info(f'{self.name} completed transition {transition_display}')
 
     def find_transition(
         self, source_state: Enum, trigger_event: Enum
