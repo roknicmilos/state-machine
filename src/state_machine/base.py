@@ -22,7 +22,7 @@ class BaseStateMachine(ABC):
         Add a transition to the state machine. Raises an error if a transition
         with the same source state and trigger event already exists.
         """
-        if self.find_transition(
+        if self._find_transition(
             transition.source_state, transition.trigger_event
         ):
             raise ValueError(
@@ -39,7 +39,7 @@ class BaseStateMachine(ABC):
         state, if such a transition exists. If it doesn't exist, this method
         does nothing.
         """
-        if transition := self.find_transition(self.state, trigger_event):
+        if transition := self._find_transition(self.state, trigger_event):
             self.perform_transition(transition)
         else:
             logger.warning(
@@ -54,6 +54,7 @@ class BaseStateMachine(ABC):
         for the current state.
         """
         logger.info(f'{self.name} starting transition {transition.display}')
+
         for before_callback in transition.before_callbacks:
             before_callback()
 
@@ -64,7 +65,7 @@ class BaseStateMachine(ABC):
 
         logger.info(f'{self.name} completed transition {transition.display}')
 
-    def find_transition(
+    def _find_transition(
         self, source_state: Enum, trigger_event: Enum
     ) -> Transition | None:
         """
