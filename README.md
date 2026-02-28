@@ -25,37 +25,40 @@ See the "Quick start" section below to run the demo.
 
 ## Quick start
 
-1. Ensure you have Python 3.8+ installed.
+1. Ensure you have Python 3.12+ installed (matching `pyproject.toml`).
 
-2. (Optional but recommended) Create and activate a virtual environment from the
-   project root:
+2. Install [`uv`](https://docs.astral.sh/uv/) (once, globally):
     ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
 
-3. Run the demo script from the project root:
+3. From the project root, create the virtual environment and install dependencies:
     ```bash
-    python3 src/main.py
+    uv sync
     ```
 
-## What you should see
+4. Run the demo script inside the `uv` environment:
+    ```bash
+    uv run python src/main.py
+    ```
 
-The script runs two small scenarios (camera and pressure sensor) and prints
-transitions and actions, for example:
+## Developer setup
 
-```
-############ Simulate CAMERA lifecycle ############
-Initial camera state: disconnected
+### Pre-commit hooks
 
-[CameraSM]
- 🔔 event:       connect
- 🔄 transition:  disconnected → connecting
- 🎯 actions: 
-	on_exit_state  > Connecting camera...
-	on_transition  > Initializing...
-	on_enter_state > Camera is connecting...
- 📝 description: Begin connection
+This project uses [`pre-commit`](https://pre-commit.com) (installed via the `dev` dependency group in `pyproject.toml`) to run tools like `ruff` and `ty` before each commit.
 
-... (more transitions and actions)
-```
+1. Install dev dependencies (if you haven’t already):
+    ```bash
+    uv sync --group dev
+    ```
+
+2. Install the Git hooks:
+    ```bash
+    uv run pre-commit install
+    ```
+
+3. (Optional) Run all hooks on the codebase:
+    ```bash
+    uv run pre-commit run --all-files
+    ```

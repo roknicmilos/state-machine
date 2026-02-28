@@ -1,0 +1,58 @@
+[project]
+name = "finite-state-machine-framework"
+version = "0.1.0"
+description = "A Python framework for building finite state machines (FSMs) with ease and flexibility."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.0",
+    "pydantic>=2.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.0.0",
+    "ruff>=0.15.2",
+    "ty>=0.0.17",
+]
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    # Core linting (pycodestyle, pyflakes)
+    "E", "W", "F", "N",
+    # Import sorting (isort)
+    "I",
+    # Code quality plugins
+    "B", # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "ANN", # flake8-annotations for type hints
+    # Security checks
+    "S", # flake8-bandit
+    # Syntax upgrades
+    "UP", # pyupgrade
+]
+ignore = [
+    "B008", # do not perform function calls in argument defaults
+    "SIM110", # prefer using 'x is None' over 'not x'
+    "SIM118", # consider using a set instead of a list for membership tests
+    "S603"
+]
+unfixable = ["B"]
+
+[tool.ruff.lint.per-file-ignores]
+"!src/core/**.py" = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ty.src]
+include = ["src/core"]
