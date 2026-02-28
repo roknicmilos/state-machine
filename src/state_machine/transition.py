@@ -1,18 +1,29 @@
-from dataclasses import dataclass, field
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable
+
+from pydantic import BaseModel, ConfigDict
 
 
-@dataclass
-class Transition:
+class Transition(BaseModel):
     """
     Represents a state transition in a state machine. Each transition is
     triggered by an event and defines the source and target states, as well as
     optional callbacks to perform before and after the transition.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     trigger_event: Enum
     source_state: Enum
     target_state: Enum
-    before_callbacks: list[Callable] = field(default_factory=list)
-    after_callbacks: list[Callable] = field(default_factory=list)
+    before_callbacks: list[Callable] = []
+    after_callbacks: list[Callable] = []
+
+    @property
+    def display(self) -> str:
+        """Return a string representation of the transition."""
+        return (
+            f'<source={self.source_state.value}; '
+            f'event={self.trigger_event.value}; '
+            f'target={self.target_state.value}>'
+        )

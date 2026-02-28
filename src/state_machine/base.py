@@ -53,12 +53,7 @@ class BaseStateMachine(ABC):
         current state. This method assumes that the given transition is valid
         for the current state.
         """
-        transition_display = (
-            f'<source={transition.source_state.value}; '
-            f'event={transition.trigger_event.value}; '
-            f'target={transition.target_state.value}>'
-        )
-        logger.info(f'{self.name} starting transition {transition_display}')
+        logger.info(f'{self.name} starting transition {transition.display}')
         for before_callback in transition.before_callbacks:
             before_callback()
 
@@ -67,7 +62,7 @@ class BaseStateMachine(ABC):
         for after_callback in transition.after_callbacks:
             after_callback()
 
-        logger.info(f'{self.name} completed transition {transition_display}')
+        logger.info(f'{self.name} completed transition {transition.display}')
 
     def find_transition(
         self, source_state: Enum, trigger_event: Enum
