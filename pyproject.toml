@@ -46,7 +46,7 @@ ignore = [
 unfixable = ["B"]
 
 [tool.ruff.lint.per-file-ignores]
-"!src/core/**.py" = ["ALL"]
+"!src/state_machine/**.py" = ["ALL"]
 
 [tool.ruff.format]
 quote-style = "single"
@@ -55,4 +55,4 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ty.src]
-include = ["src/core"]
+include = ["src/state_machine"]
