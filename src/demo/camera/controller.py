@@ -1,6 +1,9 @@
 from state_machine import Transition
+from utils import get_logger
 
 from .state_machine import CameraStateMachine, CameraEvent, CameraState
+
+logger = get_logger(__name__)
 
 
 class CameraController:
@@ -65,20 +68,20 @@ class CameraController:
 
     # Callback implementations used as transition actions.
 
-    def _power_on(self) -> str:
-        return 'Powering on camera hardware.'
+    def _power_on(self) -> None:
+        logger.info('Powering on camera hardware.')
 
-    def _start_stream(self) -> str:
-        return 'Starting video stream.'
+    def _start_stream(self) -> None:
+        logger.info('Starting video stream.')
 
-    def _stop_stream(self) -> str:
-        return 'Stopping video stream.'
+    def _stop_stream(self) -> None:
+        logger.info('Stopping video stream.')
 
-    def _handle_error(self) -> str:
-        return 'Logging and handling camera error.'
+    def _handle_error(self) -> None:
+        logger.info('Logging and handling camera error.')
 
-    def _reset_device(self) -> str:
-        return 'Resetting device to a safe offline state.'
+    def _reset_device(self) -> None:
+        logger.info('Resetting device to a safe offline state.')
 
     # Simple driver to trigger events and show state changes.
 
