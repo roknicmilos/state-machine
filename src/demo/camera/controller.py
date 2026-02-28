@@ -18,17 +18,8 @@ class CameraController:
             Transition(
                 trigger_event=CameraEvent.POWER_ON,
                 source_state=CameraState.OFFLINE,
-                target_state=CameraState.CONNECTING,
-                before_callbacks=[self._power_on],
-            )
-        )
-
-        self.camera_sm.add_transition(
-            Transition(
-                trigger_event=CameraEvent.CONNECT_OK,
-                source_state=CameraState.CONNECTING,
                 target_state=CameraState.READY,
-                before_callbacks=[self._on_connected],
+                before_callbacks=[self._power_on],
             )
         )
 
@@ -51,7 +42,6 @@ class CameraController:
         )
 
         for source_state in (
-            CameraState.CONNECTING,
             CameraState.READY,
             CameraState.STREAMING,
         ):
@@ -78,9 +68,6 @@ class CameraController:
     def _power_on(self) -> str:
         return 'Powering on camera hardware.'
 
-    def _on_connected(self) -> str:
-        return 'Camera connection established.'
-
     def _start_stream(self) -> str:
         return 'Starting video stream.'
 
@@ -98,7 +85,6 @@ class CameraController:
     def run_demo(self) -> None:
         sequence = [
             CameraEvent.POWER_ON,
-            CameraEvent.CONNECT_OK,
             CameraEvent.START_STREAM,
             CameraEvent.ERROR,
             CameraEvent.RESET,
