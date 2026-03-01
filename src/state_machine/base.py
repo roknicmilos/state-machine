@@ -1,23 +1,25 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 
-from state_machine import Transition
+from state_machine.transition import Transition
 from utils import get_logger
 
 logger = get_logger(__name__)
 
 
-class BaseStateMachine(ABC):
+class BaseStateMachine[StateType: Enum, EventType: Enum](ABC):
     def __init__(self) -> None:
         self.name: str = self.__class__.__name__
-        self.transitions: list[Transition] = []
-        self.state: Enum = self.get_init_state()
+        self.transitions: list[Transition[StateType, EventType]] = []
+        self.state: StateType = self.get_init_state()
         logger.info(f'{self.name} initialized with state {self.state.value}')
 
     @abstractmethod
-    def get_init_state(self) -> Enum: ...
+    def get_init_state(self) -> StateType: ...
 
-    def add_transition(self, transition: Transition) -> None:
+    def add_transition(
+        self, transition: Transition[StateType, EventType]
+    ) -> None:
         """
         Add a transition to the state machine. Raises an error if a transition
         with the same source state and trigger event already exists.
@@ -33,7 +35,7 @@ class BaseStateMachine(ABC):
 
         self.transitions.append(transition)
 
-    def handle_event(self, trigger_event: Enum) -> None:
+    def handle_event(self, trigger_event: EventType) -> None:
         """
         Perform the transition associated with the given event and the current
         state, if such a transition exists. If it doesn't exist, this method
@@ -47,7 +49,9 @@ class BaseStateMachine(ABC):
                 f'with trigger event {trigger_event.value}'
             )
 
-    def perform_transition(self, transition: Transition) -> None:
+    def perform_transition(
+        self, transition: Transition[StateType, EventType]
+    ) -> None:
         """
         Perform callbacks associated with a state transition and update the
         current state. This method assumes that the given transition is valid
@@ -66,8 +70,8 @@ class BaseStateMachine(ABC):
         logger.info(f'{self.name} completed transition {transition.display}')
 
     def _find_transition(
-        self, source_state: Enum, trigger_event: Enum
-    ) -> Transition | None:
+        self, source_state: StateType, trigger_event: EventType
+    ) -> Transition[StateType, EventType] | None:
         """
         Find a transition based on a state and a trigger event. Returns
         None if no such transition exists.

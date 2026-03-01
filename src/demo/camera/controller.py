@@ -1,7 +1,11 @@
-from state_machine import Transition
 from utils import get_logger
 
-from .state_machine import CameraStateMachine, CameraEvent, CameraState
+from .state_machine import (
+    CameraStateMachine,
+    CameraEvent,
+    CameraState,
+    CameraTransition,
+)
 
 logger = get_logger(__name__)
 
@@ -18,7 +22,7 @@ class CameraController:
 
     def _register_transitions(self) -> None:
         self.camera_sm.add_transition(
-            Transition(
+            CameraTransition(
                 trigger_event=CameraEvent.POWER_ON,
                 source_state=CameraState.OFFLINE,
                 target_state=CameraState.READY,
@@ -27,7 +31,7 @@ class CameraController:
         )
 
         self.camera_sm.add_transition(
-            Transition(
+            CameraTransition(
                 trigger_event=CameraEvent.START_STREAM,
                 source_state=CameraState.READY,
                 target_state=CameraState.STREAMING,
@@ -36,7 +40,7 @@ class CameraController:
         )
 
         self.camera_sm.add_transition(
-            Transition(
+            CameraTransition(
                 trigger_event=CameraEvent.STOP_STREAM,
                 source_state=CameraState.STREAMING,
                 target_state=CameraState.READY,
@@ -49,7 +53,7 @@ class CameraController:
             CameraState.STREAMING,
         ):
             self.camera_sm.add_transition(
-                Transition(
+                CameraTransition(
                     trigger_event=CameraEvent.ERROR,
                     source_state=source_state,
                     target_state=CameraState.ERROR,
@@ -58,7 +62,7 @@ class CameraController:
             )
 
         self.camera_sm.add_transition(
-            Transition(
+            CameraTransition(
                 trigger_event=CameraEvent.RESET,
                 source_state=CameraState.ERROR,
                 target_state=CameraState.OFFLINE,
