@@ -16,8 +16,8 @@ class Transition[StateType: Enum, EventType: Enum](BaseModel):
     trigger_event: EventType
     source_state: StateType
     target_state: StateType
-    before_callbacks: list[Callable] = []
-    after_callbacks: list[Callable] = []
+    before_callbacks: list[Callable[[], None]] = []
+    after_callbacks: list[Callable[[], None]] = []
 
     @property
     def display(self) -> str:
