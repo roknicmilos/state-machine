@@ -12,6 +12,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.0.0",
+    "pytest>=9.0.2",
     "ruff>=0.15.2",
     "ty>=0.0.17",
 ]
@@ -56,3 +57,7 @@ line-ending = "auto"
 
 [tool.ty.src]
 include = ["src/state_machine"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

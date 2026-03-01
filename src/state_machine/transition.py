@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Transition[StateType: Enum, EventType: Enum](BaseModel):
@@ -11,7 +11,7 @@ class Transition[StateType: Enum, EventType: Enum](BaseModel):
     optional callbacks to perform before and after the transition.
     """
 
-    model_config = {'arbitrary_types_allowed': True}
+    model_config = ConfigDict(arbitrary_types_allowed=True, strict=True)
 
     trigger_event: EventType
     source_state: StateType
