@@ -5,7 +5,7 @@ A lightweight, generic Python framework for building finite state machines (FSMs
 ## Modules
 
 - `BaseStateMachine` — abstract base class for all state machines.
-- `Transition` — generic dataclass representing a state transition.
+- `Transition` — generic Pydantic model representing a state transition.
 
 ---
 
@@ -156,12 +156,12 @@ class DeviceController:
 
 ## Transition callbacks
 
-| Field | When it runs |
-|---|---|
-| `before_callbacks` | After the current state's exit, before `state` is updated |
-| `after_callbacks` | After `state` is updated to `target_state` |
+| Field              | When it runs                                |
+|--------------------|---------------------------------------------|
+| `before_callbacks` | Before `state` is updated to `target_state` |
+| `after_callbacks`  | After `state` is updated to `target_state`  |
 
-Both fields accept a list of zero-argument callables (`() -> None`).
+Both fields accept a list of zero-argument callables (`Callable[[], None]`).
 
 ---
 

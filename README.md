@@ -1,16 +1,7 @@
-# State Machine Framework
+# Finite State Machine Framework
 
-Small example project implementing **simple state machine framework** in
-**Python**.
-
-This framework includes/supports:
-
-- **Abstract base class** for state machines,
-- **Defining states and trigger events**,
-- **Defining transitions** between states with associated events and callbacks,
-- **Handling events** to trigger state transitions.
-
-Check out the code in [src/state_machine/](src/state_machine) for details.
+Small example project implementing **simple lightweight finite state machine framework** in **Python**.
+For more details, see the [src/state_machine/README.md](src/state_machine/README.md)
 
 ## Quick start
 
@@ -32,6 +23,22 @@ Check out the code in [src/state_machine/](src/state_machine) for details.
     ```
 
 ## Developer setup
+
+### Running tests
+
+Tests cover the `src/state_machine/` module and live in `tests/state_machine/`.
+
+Run the full test suite:
+
+```bash
+uv run pytest
+```
+
+Run only the state machine tests with verbose output:
+
+```bash
+uv run pytest tests/state_machine/ -v
+```
 
 ### Pre-commit hooks
 
